@@ -17,6 +17,7 @@
 }
 
 @theme {
+  /* font-family and text presets styles */
   --font-rubik: "Rubik", sans-serif;
 
   --text-preset-1: 24px;
