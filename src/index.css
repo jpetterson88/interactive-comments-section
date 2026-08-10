@@ -1,10 +1,68 @@
 @import 'tailwindcss';
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@font-face {
+  font-family: "Rubik";
+  src: url("/fonts/rubik/Rubik-Regular.ttf") format("ttf");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
+
+@font-face {
+  font-family: "Rubik";
+  src: url("/fonts/rubik/Rubik-Medium.ttf") format("ttf");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Font family */
+  --font-rubik: "Rubik", sans-serif;
+
+  /* Text Preset 1 — 24px, Rubik Medium, 120% line-height, 0px letter-spacing */
+  --text-preset-1: 24px;
+  --text-preset-1--line-height: 120%;
+  --text-preset-1--letter-spacing: 0px;
+
+  /* Text Preset 2 Medium — 16px, Rubik Medium, 150% line-height, 0px letter-spacing */
+  --text-preset-2-medium: 16px;
+  --text-preset-2-medium--line-height: 150%;
+  --text-preset-2-medium--letter-spacing: 0px;
+
+  /* Text Preset 2 Regular — 16px, Rubik Regular, 150% line-height, 0px letter-spacing */
+  --text-preset-2-regular: 16px;
+  --text-preset-2-regular--line-height: 150%;
+  --text-preset-2-regular--letter-spacing: 0px;
+
+  /* Text Preset 3 — 13px, Rubik Medium, 120% line-height, 0px letter-spacing */
+  --text-preset-3: 13px;
+  --text-preset-3--line-height: 120%;
+  --text-preset-3--letter-spacing: 0px;
+}
+
+@theme {
+  /* spacing */
+  --spacing-100: 8px;
+  --spacing-200: 16px;
+  --spacing-300: 24px;
+  --spacing-500: 40px; 
+}
+
+@theme {
+    /* colors */
+  --color-grey-800: #334253;
+  --color-grey-500: #67727E;
+  --color-grey-100: #E9EBF0;
+  --color-grey-50:  #F5F6FA;
+
+  --color-primary-purple-600: #5357B6;
+  --color-primary-purple-200: #C5C6EF;
+
+  --color-primary-pink-400: #ED6368;
+  --color-primary-pink-200: #FFB8BB;
+}
+
 
 html, body {
   min-height: 100vh;

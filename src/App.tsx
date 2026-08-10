@@ -1,10 +1,10 @@
 import "./App.css";
-import CommentCard from "./CommentCard";
+import CommentContainer from "./components/CommentContainer";
 
 function App() {
   return (
-    <div className="text-amber-700">
-      <CommentCard />
+    <div>
+      <CommentContainer />
     </div>
   );
 }
