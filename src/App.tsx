@@ -3,7 +3,7 @@ import CommentContainer from "./components/CommentContainer";
 
 function App() {
   return (
-    <div>
+    <div className="bg-grey-50 h-screen">
       <CommentContainer />
     </div>
   );

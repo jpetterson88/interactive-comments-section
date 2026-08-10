@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Rubik";
-  src: url("/fonts/rubik/Rubik-Regular.ttf") format("ttf");
+  src: url("/fonts/rubik/Rubik-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -10,32 +10,23 @@
 
 @font-face {
   font-family: "Rubik";
-  src: url("/fonts/rubik/Rubik-Medium.ttf") format("ttf");
+  src: url("/fonts/rubik/Rubik-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @theme {
-  /* Font family */
   --font-rubik: "Rubik", sans-serif;
 
-  /* Text Preset 1 — 24px, Rubik Medium, 120% line-height, 0px letter-spacing */
   --text-preset-1: 24px;
   --text-preset-1--line-height: 120%;
   --text-preset-1--letter-spacing: 0px;
 
-  /* Text Preset 2 Medium — 16px, Rubik Medium, 150% line-height, 0px letter-spacing */
-  --text-preset-2-medium: 16px;
-  --text-preset-2-medium--line-height: 150%;
-  --text-preset-2-medium--letter-spacing: 0px;
+  --text-preset-2: 16px;
+  --text-preset-2--line-height: 150%;
+  --text-preset-2--letter-spacing: 0px;
 
-  /* Text Preset 2 Regular — 16px, Rubik Regular, 150% line-height, 0px letter-spacing */
-  --text-preset-2-regular: 16px;
-  --text-preset-2-regular--line-height: 150%;
-  --text-preset-2-regular--letter-spacing: 0px;
-
-  /* Text Preset 3 — 13px, Rubik Medium, 120% line-height, 0px letter-spacing */
   --text-preset-3: 13px;
   --text-preset-3--line-height: 120%;
   --text-preset-3--letter-spacing: 0px;
@@ -66,4 +57,5 @@
 
 html, body {
   min-height: 100vh;
+  font-family: 'Rubik', sans-serif;
 }
