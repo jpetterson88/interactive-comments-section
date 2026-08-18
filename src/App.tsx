@@ -1,10 +1,10 @@
 import "./App.css";
-import CommentContainer from "./components/CommentContainer";
+import CommentSection from "./components/CommentSection/CommentSection";
 
 function App() {
   return (
     <div className="bg-grey-50 h-screen">
-      <CommentContainer />
+      <CommentSection />
     </div>
   );
 }
