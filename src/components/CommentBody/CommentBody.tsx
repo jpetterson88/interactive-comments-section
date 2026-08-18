@@ -7,7 +7,7 @@ interface CommentBodyProps {
 
 function CommentBody({ comment }: CommentBodyProps) {
   return (
-    <div className="w-145.5 h-30 flex-1">
+    <div className="h-30 flex-1">
       <div className="flex h-8 justify-between mb-200">
         <div className="flex items-center justify-between w-60.75">
           <img

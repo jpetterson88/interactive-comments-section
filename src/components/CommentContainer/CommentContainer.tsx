@@ -8,8 +8,8 @@ interface CommentContainerProps {
 
 function CommentContainer({ comment }: CommentContainerProps) {
   return (
-    <div className="rounded-lg w-182.5 h-41.75 flex justify-center items-center bg-white">
-      <div className="w-170.5 h-30 flex gap-300">
+    <div className="rounded-lg w-full h-41.75 flex justify-center items-center bg-white mb-300 px-[24px]">
+      <div className="max-w-170.5 flex-1 h-30 flex gap-300">
         <VoteButtons comment={comment} />
         <CommentBody comment={comment} />
       </div>

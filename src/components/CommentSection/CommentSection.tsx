@@ -19,9 +19,23 @@ function CommentSection() {
   if (loading) return <p>Carregando...</p>;
 
   return (
-    <div className="flex flex-col gap-300">
-      {data?.comments?.map((comment) => (
-        <CommentContainer comment={comment} />
+    <div className="flex flex-col max-w-182.5 m-auto">
+      {data?.comments?.map((comment, cidx) => (
+        <div className="flex flex-col items-end">
+          <CommentContainer key={cidx} comment={comment} />
+          {comment.replies.length > 0 ? (
+            <div className="w-171 flex gap-500">
+              <div className="border-2 border-grey-100"></div>
+              <div className="flex-1">
+                {comment.replies.map((reply, ridx) => (
+                  <CommentContainer key={ridx} comment={reply} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       ))}
     </div>
   );
