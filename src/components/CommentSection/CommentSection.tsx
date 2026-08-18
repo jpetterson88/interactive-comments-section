@@ -23,7 +23,7 @@ function CommentSection() {
       {data?.comments?.map((comment, cidx) => (
         <div className="flex flex-col items-end">
           <CommentContainer key={cidx} comment={comment} />
-          {comment.replies.length > 0 ? (
+          {comment.replies.length > 0 && (
             <div className="w-171 flex gap-500">
               <div className="border-2 border-grey-100"></div>
               <div className="flex-1">
@@ -32,8 +32,6 @@ function CommentSection() {
                 ))}
               </div>
             </div>
-          ) : (
-            <></>
           )}
         </div>
       ))}
