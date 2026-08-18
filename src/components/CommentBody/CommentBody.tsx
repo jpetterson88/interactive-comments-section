@@ -20,12 +20,12 @@ function CommentBody({ comment }: CommentBodyProps) {
           </p>
           <p className="text-preset-2 text-grey-500">{comment.createdAt}</p>
         </div>
-        <div className="flex justify-center items-center gap-100">
+        <button className="flex justify-center items-center gap-100 cursor-pointer">
           <EditIcon />
           <p className="text-primary-purple-600 text-preset-2 font-medium">
             Reply
           </p>
-        </div>
+        </button>
       </div>
       <div className="text-preset-2 text-grey-500">
         {comment.content}
