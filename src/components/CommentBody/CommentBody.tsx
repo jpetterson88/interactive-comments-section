@@ -3,11 +3,12 @@ import type { Comment } from "../CommentSection/types";
 
 interface CommentBodyProps {
   comment: Comment;
+  onReply: () => void;
 }
 
-function CommentBody({ comment }: CommentBodyProps) {
+function CommentBody({ comment, onReply }: CommentBodyProps) {
   return (
-    <div className="h-30 flex-1">
+    <div className="flex-1">
       <div className="flex h-8 justify-between mb-200">
         <div className="flex items-center justify-between w-60.75">
           <img
@@ -20,7 +21,7 @@ function CommentBody({ comment }: CommentBodyProps) {
           </p>
           <p className="text-preset-2 text-grey-500">{comment.createdAt}</p>
         </div>
-        <button className="flex justify-center items-center gap-100 cursor-pointer">
+        <button className="flex justify-center items-center gap-100 cursor-pointer" onClick={onReply}>
           <EditIcon />
           <p className="text-primary-purple-600 text-preset-2 font-medium">
             Reply

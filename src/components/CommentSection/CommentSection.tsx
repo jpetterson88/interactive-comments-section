@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import CommentContainer from "../CommentContainer/CommentContainer";
-import type { Data, Comment } from "./types";
+import type { Data } from "./types";
+import ContainerContent from "../ContainerContent/ContainerContent";
+import AddComment from "../AddComment/AddComment";
 
 function CommentSection() {
   const [data, setData] = useState<Data | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
-  const isLastElement = (array: Comment[], index: number) => {
-    const lastIndex = array.length - 1;
-
-    return lastIndex === index ? "mb-0" : "mb-300";
+  const handleReply = (commentId: string) => {
+    setReplyingTo(commentId);
   };
 
   useEffect(() => {
@@ -25,27 +26,47 @@ function CommentSection() {
   if (loading) return <p>Carregando...</p>;
 
   return (
-    <div className="flex flex-col max-w-182.5 m-auto">
+    <div className="flex flex-col max-w-182.5 mx-auto py-15 gap-300">
       {data?.comments?.map((comment, cidx) => {
-        const style = isLastElement(data.comments, cidx);
+        const commentKey = `comment-${cidx}`;
 
         return (
-          <div className="flex flex-col items-end" key={`comment-${cidx}`}>
-            <CommentContainer comment={comment} style={style} />
+          <div className="flex flex-col items-end gap-300">
+            <CommentContainer key={commentKey}>
+              <ContainerContent
+                comment={comment}
+                onReply={() => handleReply(commentKey)}
+              />
+            </CommentContainer>
+
+            {replyingTo === commentKey && (
+              <CommentContainer>
+                <AddComment currentUser={data?.currentUser} />
+              </CommentContainer>
+            )}
 
             {comment.replies.length > 0 && (
-              <div className="w-171 my-300 flex gap-500">
+              <div className="w-171 flex gap-500">
                 <div className="border-2 border-grey-100"></div>
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col gap-300">
                   {comment.replies.map((reply, ridx) => {
-                    const style = isLastElement(comment.replies, ridx);
+                    const replyKey = `reply-${cidx}-${ridx}`;
 
                     return (
-                      <CommentContainer
-                        key={`reply-${cidx}-${ridx}`}
-                        comment={reply}
-                        style={style}
-                      />
+                      <>
+                        <CommentContainer key={replyKey}>
+                          <ContainerContent
+                            comment={reply}
+                            onReply={() => handleReply(replyKey)}
+                          />
+                        </CommentContainer>
+
+                        {replyingTo === replyKey && (
+                          <CommentContainer>
+                            <AddComment currentUser={data?.currentUser} />
+                          </CommentContainer>
+                        )}
+                      </>
                     );
                   })}
                 </div>
@@ -54,6 +75,9 @@ function CommentSection() {
           </div>
         );
       })}
+      <CommentContainer>
+        <AddComment currentUser={data?.currentUser} />
+      </CommentContainer>
     </div>
   );
 }
