@@ -7,10 +7,18 @@ import AddComment from "../AddComment/AddComment";
 function CommentSection() {
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Set<string>>(new Set());
 
   const handleReply = (commentId: string) => {
-    setReplyingTo(commentId);
+    setReplyingTo((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(commentId)) {
+        newSet.delete(commentId); // fechar se já está aberto
+      } else {
+        newSet.add(commentId); // abrir
+      }
+      return newSet;
+    });
   };
 
   useEffect(() => {
@@ -39,7 +47,7 @@ function CommentSection() {
               />
             </CommentContainer>
 
-            {replyingTo === commentKey && (
+            {replyingTo.has(commentKey) && (
               <CommentContainer>
                 <AddComment currentUser={data?.currentUser} />
               </CommentContainer>
@@ -61,7 +69,7 @@ function CommentSection() {
                           />
                         </CommentContainer>
 
-                        {replyingTo === replyKey && (
+                        {replyingTo.has(replyKey) && (
                           <CommentContainer>
                             <AddComment currentUser={data?.currentUser} />
                           </CommentContainer>
