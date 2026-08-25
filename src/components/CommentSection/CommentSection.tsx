@@ -43,6 +43,7 @@ function CommentSection() {
             <CommentContainer key={commentKey}>
               <ContainerContent
                 comment={comment}
+                currentUser={data.currentUser}
                 onReply={() => handleReply(commentKey)}
               />
             </CommentContainer>
@@ -65,6 +66,7 @@ function CommentSection() {
                         <CommentContainer key={replyKey}>
                           <ContainerContent
                             comment={reply}
+                            currentUser={data.currentUser}
                             onReply={() => handleReply(replyKey)}
                           />
                         </CommentContainer>
