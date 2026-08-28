@@ -5,8 +5,16 @@ import ContainerContent from "../ContainerContent/ContainerContent";
 import AddComment from "../AddComment/AddComment";
 
 function CommentSection() {
-  const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<Data | null>(() => {
+    const savedData = localStorage.getItem("newData");
+    if (savedData) {
+      setLoading(false);
+      return JSON.parse(savedData);
+    } else {
+      return null;
+    }
+  });
   const [replyingTo, setReplyingTo] = useState<Set<string>>(new Set());
 
   const handleReply = (commentId: string) => {
@@ -22,6 +30,8 @@ function CommentSection() {
   };
 
   useEffect(() => {
+    if (data) return;
+
     fetch("/data.json")
       .then((res) => res.json())
       .then((data) => {
@@ -29,7 +39,13 @@ function CommentSection() {
         setLoading(false);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      localStorage.setItem("newItem", JSON.stringify(data));
+    }
+  }, [data]);
 
   if (loading) return <p>Carregando...</p>;
 
@@ -39,8 +55,8 @@ function CommentSection() {
         const commentKey = `comment-${cidx}`;
 
         return (
-          <div className="flex flex-col items-end gap-300">
-            <CommentContainer key={commentKey}>
+          <div className="flex flex-col items-end gap-300" key={commentKey}>
+            <CommentContainer>
               <ContainerContent
                 comment={comment}
                 currentUser={data.currentUser}
@@ -62,8 +78,8 @@ function CommentSection() {
                     const replyKey = `reply-${cidx}-${ridx}`;
 
                     return (
-                      <>
-                        <CommentContainer key={replyKey}>
+                      <div key={replyKey}>
+                        <CommentContainer>
                           <ContainerContent
                             comment={reply}
                             currentUser={data.currentUser}
@@ -76,7 +92,7 @@ function CommentSection() {
                             <AddComment currentUser={data?.currentUser} />
                           </CommentContainer>
                         )}
-                      </>
+                      </div>
                     );
                   })}
                 </div>

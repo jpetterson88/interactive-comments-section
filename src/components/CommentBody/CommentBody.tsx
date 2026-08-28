@@ -19,10 +19,16 @@ function CommentBody({ comment, currentUser, onReply }: CommentBodyProps) {
             src={comment.user.image.png}
             alt={comment.user.username}
           />
-          <p className="text-preset-2 text-grey-800 font-medium flex items-center gap-100">
-            {comment.user.username}
-            {currentUser.username === comment.user.username ? <div className="bg-primary-purple-600 text-white text-preset-3 font-medium rounded-xs w-9 h-4.75 flex items-center justify-center">you</div> : null}
-          </p>
+          <div className="flex items-center gap-100">
+            <p className="text-preset-2 text-grey-800 font-medium">
+              {comment.user.username}
+            </p>
+            {currentUser.username === comment.user.username ? (
+              <div className="bg-primary-purple-600 text-white text-preset-3 font-medium rounded-xs w-9 h-4.75 flex items-center justify-center">
+                you
+              </div>
+            ) : null}
+          </div>
           <p className="text-preset-2 text-grey-500">{comment.createdAt}</p>
         </div>
         {currentUser.username === comment.user.username ? (
