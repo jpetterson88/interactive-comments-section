@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import CommentContainer from "../CommentContainer/CommentContainer";
-import type { Data } from "./types";
+import type { Data, Comment } from "./types";
 import ContainerContent from "../ContainerContent/ContainerContent";
 import AddComment from "../AddComment/AddComment";
+import { getRelativeTime } from "./helpers";
 
 function CommentSection() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<Data | null>(() => {
+  const [data, setData] = useState<Data>(() => {
     const savedData = localStorage.getItem("newData");
     if (savedData) {
       setLoading(false);
@@ -21,12 +22,47 @@ function CommentSection() {
     setReplyingTo((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(commentId)) {
-        newSet.delete(commentId); // fechar se já está aberto
+        // close the currentUser comment section if it's already open
+        newSet.delete(commentId);
       } else {
-        newSet.add(commentId); // abrir
+        // open the currentUser comment section
+        newSet.add(commentId);
       }
       return newSet;
     });
+  };
+
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const content = formData.get("comment") as string;
+    if (!content) return;
+
+    const createdAt = getRelativeTime(new Date());
+    const score = 0;
+    const user = {
+      image: {
+        png: data.currentUser.image.png,
+        webp: data.currentUser.image.webp,
+      },
+      username: data.currentUser.username,
+    };
+    const replies = [] as Comment[];
+
+    const currentUserReply = {
+      id: data?.comments?.length + 1,
+      content,
+      createdAt,
+      score,
+      user,
+      replies,
+    };
+
+    setData((prevData) => ({
+      ...prevData,
+      comments: [...prevData.comments, currentUserReply],
+    }));
   };
 
   useEffect(() => {
@@ -43,7 +79,7 @@ function CommentSection() {
 
   useEffect(() => {
     if (data) {
-      localStorage.setItem("newItem", JSON.stringify(data));
+      localStorage.setItem("newData", JSON.stringify(data));
     }
   }, [data]);
 
@@ -102,7 +138,10 @@ function CommentSection() {
         );
       })}
       <CommentContainer>
-        <AddComment currentUser={data?.currentUser} />
+        <AddComment
+          currentUser={data.currentUser}
+          handleSubmit={handleSubmit}
+        />
       </CommentContainer>
     </div>
   );

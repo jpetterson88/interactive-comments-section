@@ -1,14 +1,17 @@
 import type { User } from "../CommentSection/types";
+import React from "react";
 
 interface AddCommentProps {
-  currentUser: User | undefined;
+  currentUser: User;
+  handleSubmit: (e: React.SyntheticEvent<HTMLFormElement>) => void;
 }
 
-function AddComment({ currentUser }: AddCommentProps) {
+function AddComment({ currentUser, handleSubmit }: AddCommentProps) {
   return (
     <form
-      id="comment-form"
+      id="currentUser-comment"
       className="flex gap-200 justify-between items-start flex-1 h-full"
+      onSubmit={handleSubmit}
     >
       <picture className="w-[40px] h-[40px]">
         <img src={currentUser?.image.png} alt={currentUser?.username} />
@@ -19,7 +22,10 @@ function AddComment({ currentUser }: AddCommentProps) {
         id="comment"
         placeholder="Add a comment..."
       />
-      <button type="submit" className="cursor-pointer w-26 h-12 text-white bg-primary-purple-600 rounded-lg">
+      <button
+        type="submit"
+        className="cursor-pointer w-26 h-12 text-white bg-primary-purple-600 rounded-lg"
+      >
         SEND
       </button>
     </form>
