@@ -16,9 +16,9 @@ function CommentSection() {
       return null;
     }
   });
-  const [replyingTo, setReplyingTo] = useState<Set<string>>(new Set());
+  const [replyingTo, setReplyingTo] = useState<Set<number>>(new Set());
 
-  const handleReply = (commentId: string) => {
+  const handleReply = (commentId: number) => {
     setReplyingTo((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(commentId)) {
@@ -87,8 +87,8 @@ function CommentSection() {
 
   return (
     <div className="flex flex-col max-w-182.5 mx-auto py-15 gap-300">
-      {data?.comments?.map((comment, cidx) => {
-        const commentKey = `comment-${cidx}`;
+      {data?.comments?.map((comment) => {
+        const commentKey: number = comment.id;
 
         return (
           <div className="flex flex-col items-end gap-300" key={commentKey}>
@@ -102,7 +102,10 @@ function CommentSection() {
 
             {replyingTo.has(commentKey) && (
               <CommentContainer>
-                <AddComment currentUser={data?.currentUser} />
+                <AddComment
+                  currentUser={data?.currentUser}
+                  handleSubmit={handleSubmit}
+                />
               </CommentContainer>
             )}
 
@@ -110,11 +113,11 @@ function CommentSection() {
               <div className="w-171 flex gap-500">
                 <div className="border-2 border-grey-100"></div>
                 <div className="flex-1 flex flex-col gap-300">
-                  {comment.replies.map((reply, ridx) => {
-                    const replyKey = `reply-${cidx}-${ridx}`;
+                  {comment.replies.map((reply) => {
+                    const replyKey = reply.id;
 
                     return (
-                      <div key={replyKey}>
+                      <div className="flex flex-col gap-300" key={replyKey}>
                         <CommentContainer>
                           <ContainerContent
                             comment={reply}
@@ -125,7 +128,10 @@ function CommentSection() {
 
                         {replyingTo.has(replyKey) && (
                           <CommentContainer>
-                            <AddComment currentUser={data?.currentUser} />
+                            <AddComment
+                              currentUser={data?.currentUser}
+                              handleSubmit={handleSubmit}
+                            />
                           </CommentContainer>
                         )}
                       </div>

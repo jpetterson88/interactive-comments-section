@@ -4,7 +4,7 @@ export function getRelativeTime(date: Date): string {
 
   // Menos de uma hora
   if (diffInSeconds < 3600) {
-    return "< one hour ago";
+    return "less then one hour ago";
   }
 
   // Horas
