@@ -6,7 +6,7 @@ import AddComment from "../AddComment/AddComment";
 import { getRelativeTime } from "./helpers";
 
 function CommentSection() {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Data>(() => {
     const savedData = localStorage.getItem("newData");
     if (savedData) {
@@ -16,52 +16,60 @@ function CommentSection() {
       return null;
     }
   });
-  const [replyingTo, setReplyingTo] = useState<Set<number>>(new Set());
+  const [openReplyBoxes, setOpenReplyBoxes] = useState<Record<string, boolean>>(
+    {},
+  );
 
-  const handleReply = (commentId: number) => {
-    setReplyingTo((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(commentId)) {
-        // close the currentUser comment section if it's already open
-        newSet.delete(commentId);
-      } else {
-        // open the currentUser comment section
-        newSet.add(commentId);
-      }
-      return newSet;
-    });
-  };
+  const handleOpenReply = (commentId: string) =>
+    setOpenReplyBoxes((prev) => ({ ...prev, [commentId]: !prev[commentId] }));
 
-  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  const handleReply = (
+    e: React.SyntheticEvent<HTMLFormElement>,
+    comment: Comment,
+  ) => {
     e.preventDefault();
 
+    const commentId = comment.id;
     const formData = new FormData(e.currentTarget);
-    const content = formData.get("comment") as string;
-    if (!content) return;
+    const formDataComment = formData.get("comment") as string;
+    const replies = comment.replies as Comment[];
 
-    const createdAt = getRelativeTime(new Date());
-    const score = 0;
-    const user = {
-      image: {
-        png: data.currentUser.image.png,
-        webp: data.currentUser.image.webp,
-      },
-      username: data.currentUser.username,
-    };
-    const replies = [] as Comment[];
-
-    const currentUserReply = {
-      id: data?.comments?.length + 1,
-      content,
-      createdAt,
-      score,
-      user,
-      replies,
-    };
+    if (replies) {
+      replies.push({
+        id: commentId + 1,
+        content: formDataComment,
+        createdAt: getRelativeTime(new Date()),
+        score: 0,
+        user: data.currentUser,
+        replyingTo: comment.user.username,
+      });
+    }
 
     setData((prevData) => ({
       ...prevData,
-      comments: [...prevData.comments, currentUserReply],
+      replies,
+    }));
+  };
+
+  const handleCreateComment = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const formDataComment = formData.get("comment") as string;
+    const newCommentId = data.comments.length + 1;
+    const comments = data.comments;
+
+    comments.push({
+      id: newCommentId,
+      content: formDataComment,
+      createdAt: getRelativeTime(new Date()),
+      score: 0,
+      user: data.currentUser,
+    });
+
+    setData((prevData) => ({
+      ...prevData,
+      comments,
     }));
   };
 
@@ -88,7 +96,7 @@ function CommentSection() {
   return (
     <div className="flex flex-col max-w-182.5 mx-auto py-15 gap-300">
       {data?.comments?.map((comment) => {
-        const commentKey: number = comment.id;
+        const commentKey = `comment-${String(comment.id)}`;
 
         return (
           <div className="flex flex-col items-end gap-300" key={commentKey}>
@@ -96,25 +104,25 @@ function CommentSection() {
               <ContainerContent
                 comment={comment}
                 currentUser={data.currentUser}
-                onReply={() => handleReply(commentKey)}
+                onReply={() => handleOpenReply(commentKey)}
               />
             </CommentContainer>
 
-            {replyingTo.has(commentKey) && (
+            {openReplyBoxes[commentKey] && (
               <CommentContainer>
                 <AddComment
                   currentUser={data?.currentUser}
-                  handleSubmit={handleSubmit}
+                  onSubmit={(e) => handleReply(e, comment)}
                 />
               </CommentContainer>
             )}
 
-            {comment.replies.length > 0 && (
+            {comment.replies && comment.replies.length > 0 && (
               <div className="w-171 flex gap-500">
                 <div className="border-2 border-grey-100"></div>
                 <div className="flex-1 flex flex-col gap-300">
                   {comment.replies.map((reply) => {
-                    const replyKey = reply.id;
+                    const replyKey = `reply-${String(reply.id)}`;
 
                     return (
                       <div className="flex flex-col gap-300" key={replyKey}>
@@ -122,15 +130,15 @@ function CommentSection() {
                           <ContainerContent
                             comment={reply}
                             currentUser={data.currentUser}
-                            onReply={() => handleReply(replyKey)}
+                            onReply={() => handleOpenReply(replyKey)}
                           />
                         </CommentContainer>
 
-                        {replyingTo.has(replyKey) && (
+                        {openReplyBoxes[replyKey] && (
                           <CommentContainer>
                             <AddComment
                               currentUser={data?.currentUser}
-                              handleSubmit={handleSubmit}
+                              onSubmit={(e) => handleReply(e, comment)}
                             />
                           </CommentContainer>
                         )}
@@ -146,7 +154,7 @@ function CommentSection() {
       <CommentContainer>
         <AddComment
           currentUser={data.currentUser}
-          handleSubmit={handleSubmit}
+          onSubmit={(e) => handleCreateComment(e)}
         />
       </CommentContainer>
     </div>

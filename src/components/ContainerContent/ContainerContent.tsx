@@ -8,11 +8,19 @@ interface ContainerContentProps {
   onReply: () => void;
 }
 
-function ContainerContent({ comment, currentUser, onReply }: ContainerContentProps) {
+function ContainerContent({
+  comment,
+  currentUser,
+  onReply,
+}: ContainerContentProps) {
   return (
     <div className="max-w-170.5 flex-1 flex gap-300">
       <VoteButtons comment={comment} />
-      <CommentBody comment={comment} currentUser={currentUser} onReply={onReply} />
+      <CommentBody
+        comment={comment}
+        currentUser={currentUser}
+        onReply={onReply}
+      />
     </div>
   );
 }

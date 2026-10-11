@@ -3,15 +3,15 @@ import React from "react";
 
 interface AddCommentProps {
   currentUser: User;
-  handleSubmit: (e: React.SyntheticEvent<HTMLFormElement>) => void;
+  onSubmit: (e: React.SyntheticEvent<HTMLFormElement>) => void;
 }
 
-function AddComment({ currentUser, handleSubmit }: AddCommentProps) {
+function AddComment({ currentUser, onSubmit }: AddCommentProps) {
   return (
     <form
       id="currentUser-comment"
       className="flex gap-200 justify-between items-start flex-1 h-full"
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
     >
       <picture className="w-[40px] h-[40px]">
         <img src={currentUser?.image.png} alt={currentUser?.username} />

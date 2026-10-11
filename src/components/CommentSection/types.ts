@@ -13,7 +13,7 @@ export interface Comment {
   score: number;
   user: User;
   replyingTo?: string;
-  replies: Comment[]
+  replies?: Comment[];
 }
 
 export interface Data {
