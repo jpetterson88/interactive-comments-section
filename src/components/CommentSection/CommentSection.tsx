@@ -5,6 +5,8 @@ import ContainerContent from "../ContainerContent/ContainerContent";
 import AddComment from "../AddComment/AddComment";
 import { getRelativeTime } from "./helpers";
 
+let ID = 4;
+
 function CommentSection() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Data>(() => {
@@ -16,11 +18,11 @@ function CommentSection() {
       return null;
     }
   });
-  const [openReplyBoxes, setOpenReplyBoxes] = useState<Record<string, boolean>>(
+  const [openReplyBoxes, setOpenReplyBoxes] = useState<Record<number, boolean>>(
     {},
   );
 
-  const handleOpenReply = (commentId: string) =>
+  const handleOpenReply = (commentId: number) =>
     setOpenReplyBoxes((prev) => ({ ...prev, [commentId]: !prev[commentId] }));
 
   const handleReply = (
@@ -36,7 +38,7 @@ function CommentSection() {
 
     if (replies) {
       replies.push({
-        id: commentId + 1,
+        id: ID++,
         content: formDataComment,
         createdAt: getRelativeTime(new Date()),
         score: 0,
@@ -49,18 +51,19 @@ function CommentSection() {
       ...prevData,
       replies,
     }));
-  };
 
+    setOpenReplyBoxes((prev) => ({ ...prev, [commentId]: false }));
+  };
+  
   const handleCreateComment = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
     const formDataComment = formData.get("comment") as string;
-    const newCommentId = data.comments.length + 1;
     const comments = data.comments;
 
     comments.push({
-      id: newCommentId,
+      id: ID++,
       content: formDataComment,
       createdAt: getRelativeTime(new Date()),
       score: 0,
@@ -96,7 +99,7 @@ function CommentSection() {
   return (
     <div className="flex flex-col max-w-182.5 mx-auto py-15 gap-300">
       {data?.comments?.map((comment) => {
-        const commentKey = `comment-${String(comment.id)}`;
+        const commentKey = comment.id;
 
         return (
           <div className="flex flex-col items-end gap-300" key={commentKey}>
@@ -122,7 +125,7 @@ function CommentSection() {
                 <div className="border-2 border-grey-100"></div>
                 <div className="flex-1 flex flex-col gap-300">
                   {comment.replies.map((reply) => {
-                    const replyKey = `reply-${String(reply.id)}`;
+                    const replyKey = reply.id;
 
                     return (
                       <div className="flex flex-col gap-300" key={replyKey}>
