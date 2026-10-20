@@ -1,17 +1,29 @@
 import type { User } from "../CommentSection/types";
-import React from "react";
+import React, { useState } from "react";
 
 interface AddCommentProps {
   currentUser: User;
-  onSubmit: (e: React.SyntheticEvent<HTMLFormElement>) => void;
+  replyingTo: User;
+  onSubmit: (text: string) => void;
 }
 
 function AddComment({ currentUser, onSubmit }: AddCommentProps) {
+  const [text, setText] = useState("");
+
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!text.trim()) return;
+
+    onSubmit(text.trim());
+    setText("");
+  }
+
   return (
     <form
       id="currentUser-comment"
       className="flex gap-200 justify-between items-start flex-1 h-full"
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
     >
       <picture className="w-[40px] h-[40px]">
         <img src={currentUser?.image.png} alt={currentUser?.username} />
@@ -20,6 +32,8 @@ function AddComment({ currentUser, onSubmit }: AddCommentProps) {
         className="flex-1 h-full resize-none px-200 py-100 border border-grey-100 rounded-lg outline-primary-purple-600 text-grey-800"
         name="comment"
         id="comment"
+        onChange={(e) => setText(e.target.value)}
+        value={text}
         placeholder="Add a comment..."
       />
       <button

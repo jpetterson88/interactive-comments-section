@@ -7,9 +7,15 @@ interface CommentBodyProps {
   comment: Comment;
   currentUser: User;
   onReply: () => void;
+  onDelete: () => void;
 }
 
-function CommentBody({ comment, currentUser, onReply }: CommentBodyProps) {
+function CommentBody({
+  comment,
+  currentUser,
+  onReply,
+  onDelete,
+}: CommentBodyProps) {
   return (
     <div className="flex-1">
       <div className="flex h-8 justify-between mb-200">
@@ -33,7 +39,10 @@ function CommentBody({ comment, currentUser, onReply }: CommentBodyProps) {
         </div>
         {currentUser.username === comment.user.username ? (
           <div className="flex items-center justify-between gap-300">
-            <button className="flex justify-center items-center gap-100 cursor-pointer">
+            <button
+              className="flex justify-center items-center gap-100 cursor-pointer"
+              onClick={onDelete}
+            >
               <TrashIcon />
               <p className="text-primary-pink-400 text-preset-2 font-medium">
                 Delete

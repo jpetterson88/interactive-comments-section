@@ -22,59 +22,84 @@ function CommentSection() {
     {},
   );
 
+  console.log("DATA: ", data);
+
+  // ==== REPLIES HANDLES ====
   const handleOpenReply = (commentId: number) =>
     setOpenReplyBoxes((prev) => ({ ...prev, [commentId]: !prev[commentId] }));
 
-  const handleReply = (
-    e: React.SyntheticEvent<HTMLFormElement>,
-    comment: Comment,
-  ) => {
-    e.preventDefault();
+  const addReply = (
+    target: Comment,
+    reply: Comment,
+    list: Comment[],
+  ): Comment[] =>
+    list.map((obj) => {
+      if (obj.id === target.id) {
+        return { ...obj, replies: [...(obj.replies ?? []), reply] };
+      }
+      if (obj.replies?.length) {
+        return { ...obj, replies: addReply(target, reply, obj.replies) };
+      }
+      return obj;
+    });
 
-    const commentId = comment.id;
-    const formData = new FormData(e.currentTarget);
-    const formDataComment = formData.get("comment") as string;
-    const replies = comment.replies as Comment[];
-
-    if (replies) {
-      replies.push({
-        id: ID++,
-        content: formDataComment,
-        createdAt: getRelativeTime(new Date()),
-        score: 0,
-        user: data.currentUser,
-        replyingTo: comment.user.username,
-      });
-    }
+  const handleAddReply = (text: string, comment: Comment) => {
+    const newReply: Comment = {
+      id: ++ID,
+      content: text,
+      createdAt: getRelativeTime(new Date()),
+      score: 0,
+      replyingTo: comment.user.username,
+      user: data.currentUser,
+    };
 
     setData((prevData) => ({
       ...prevData,
-      replies,
+      comments: addReply(comment, newReply, prevData.comments),
     }));
 
-    setOpenReplyBoxes((prev) => ({ ...prev, [commentId]: false }));
+    setOpenReplyBoxes((prev) => ({ ...prev, [comment.id]: false }));
   };
-  
-  const handleCreateComment = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
-    const formDataComment = formData.get("comment") as string;
-    const comments = data.comments;
+  const removeReply = (replyId: number, list: Comment[]): Comment[] =>
+    list
+      .filter((obj) => obj.id !== replyId)
+      .map((obj) =>
+        obj.replies?.length
+          ? { ...obj, replies: removeReply(replyId, obj.replies) }
+          : obj,
+      );
 
-    comments.push({
-      id: ID++,
-      content: formDataComment,
+  const handleDeleteReply = (reply: Comment) => {
+    setData((prevData) => ({
+      ...prevData,
+      comments: removeReply(reply.id, prevData.comments),
+    }));
+  };
+
+  // ==== COMMENT HANDLES ====
+  const handleAddComment = (text: string) => {
+    const newComment = {
+      id: ++ID,
+      content: text,
       createdAt: getRelativeTime(new Date()),
       score: 0,
       user: data.currentUser,
-    });
+    };
 
     setData((prevData) => ({
       ...prevData,
-      comments,
+      comments: [...prevData.comments, newComment],
     }));
   };
+
+  const handleDeleteComment = (comment: Comment) => {
+    setData((prevData) => ({
+      ...prevData,
+      comments: prevData.comments.filter((c) => c.id !== comment.id),
+    }));
+  };
+  // ========================
 
   useEffect(() => {
     if (data) return;
@@ -108,6 +133,7 @@ function CommentSection() {
                 comment={comment}
                 currentUser={data.currentUser}
                 onReply={() => handleOpenReply(commentKey)}
+                onDelete={() => handleDeleteComment(comment)}
               />
             </CommentContainer>
 
@@ -115,25 +141,30 @@ function CommentSection() {
               <CommentContainer>
                 <AddComment
                   currentUser={data?.currentUser}
-                  onSubmit={(e) => handleReply(e, comment)}
+                  replyingTo={comment.user.username}
+                  onSubmit={(text) => handleAddReply(text, comment)}
                 />
               </CommentContainer>
             )}
 
             {comment.replies && comment.replies.length > 0 && (
-              <div className="w-171 flex gap-500">
+              <div className="w-full max-w-171 flex gap-500">
                 <div className="border-2 border-grey-100"></div>
                 <div className="flex-1 flex flex-col gap-300">
                   {comment.replies.map((reply) => {
                     const replyKey = reply.id;
 
                     return (
-                      <div className="flex flex-col gap-300" key={replyKey}>
+                      <div
+                        className="flex flex-col items-end gap-300"
+                        key={replyKey}
+                      >
                         <CommentContainer>
                           <ContainerContent
                             comment={reply}
                             currentUser={data.currentUser}
                             onReply={() => handleOpenReply(replyKey)}
+                            onDelete={() => handleDeleteReply(reply)}
                           />
                         </CommentContainer>
 
@@ -141,9 +172,47 @@ function CommentSection() {
                           <CommentContainer>
                             <AddComment
                               currentUser={data?.currentUser}
-                              onSubmit={(e) => handleReply(e, comment)}
+                              onSubmit={(text) => handleAddReply(text, reply)}
                             />
                           </CommentContainer>
+                        )}
+
+                        {reply.replies && reply.replies.length > 0 && (
+                          <div className="w-full max-w-148.5 flex gap-500">
+                            <div className="border-2 border-grey-100"></div>
+                            <div className="flex-1 flex flex-col gap-300">
+                              {reply.replies.map((rr) => {
+                                const rrKey = rr.id;
+
+                                return (
+                                  <div
+                                    className="flex flex-col gap-300"
+                                    key={rrKey}
+                                  >
+                                    <CommentContainer>
+                                      <ContainerContent
+                                        comment={rr}
+                                        currentUser={data.currentUser}
+                                        onReply={() => handleOpenReply(rrKey)}
+                                        onDelete={() => handleDeleteReply(rr)}
+                                      />
+                                    </CommentContainer>
+
+                                    {openReplyBoxes[rrKey] && (
+                                      <CommentContainer>
+                                        <AddComment
+                                          currentUser={data?.currentUser}
+                                          onSubmit={(text) =>
+                                            handleAddReply(text, rr)
+                                          }
+                                        />
+                                      </CommentContainer>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         )}
                       </div>
                     );
@@ -157,7 +226,7 @@ function CommentSection() {
       <CommentContainer>
         <AddComment
           currentUser={data.currentUser}
-          onSubmit={(e) => handleCreateComment(e)}
+          onSubmit={handleAddComment}
         />
       </CommentContainer>
     </div>

@@ -6,12 +6,14 @@ interface ContainerContentProps {
   comment: Comment;
   currentUser: User;
   onReply: () => void;
+  onDelete: () => void;
 }
 
 function ContainerContent({
   comment,
   currentUser,
   onReply,
+  onDelete,
 }: ContainerContentProps) {
   return (
     <div className="max-w-170.5 flex-1 flex gap-300">
@@ -20,6 +22,7 @@ function ContainerContent({
         comment={comment}
         currentUser={currentUser}
         onReply={onReply}
+        onDelete={onDelete}
       />
     </div>
   );
